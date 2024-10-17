@@ -25,6 +25,13 @@ jobs:
         run: npm run eslint
       - name: Build
         run: npm run build
+      - name: Build Failed
+        uses: rjstone/discord-webhook-notify@v1.0.4
+        if: failure()
+        with:
+          severity: error
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+          text: Build failed
       - name: Run Unit Tests
         run: npm run test
       - name: Install Playwright Browsers
@@ -44,6 +51,13 @@ jobs:
         run: flyctl deploy --remote-only
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+      - name: Deploy Success
+        if: ${{ github.event_name == 'push' && env.CONDITION == 'false' && success() }}
+        uses: rjstone/discord-webhook-notify@v1.0.4
+        with:
+          severity: info
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+          text: A new version of Pokedex deployed
   tag_release:
     needs: [simple_deployment_pipeline]
     if: ${{ github.event_name == 'push' }}
@@ -52,7 +66,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Bump version and push tag
         if: ${{ env.CONDITION == 'false' }}
-        uses: anothrNick/github-tag-action@1.71.0
+        uses: anothrNick/github-tag-action@f278d49d30cdd8775cc3e7dd00b5ee11686ee297
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DEFAULT_BUMP: patch
