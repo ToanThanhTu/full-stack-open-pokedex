@@ -52,8 +52,8 @@ jobs:
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
       - name: Deploy Success
+        if: ${{ github.event_name == 'push' && env.CONDITION == 'false' && success() }}
         uses: rjstone/discord-webhook-notify@v1.0.4
-        if: success()
         with:
           severity: info
           webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
