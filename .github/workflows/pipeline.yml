@@ -31,7 +31,8 @@ jobs:
         with:
           severity: error
           webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
-          text: Build failed
+          description: commit [${{ github.sha }}](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}) by ${{ github.actor }} broke the build :(
+          text: Build failed.
       - name: Run Unit Tests
         run: npm run test
       - name: Install Playwright Browsers
@@ -57,7 +58,8 @@ jobs:
         with:
           severity: info
           webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
-          text: A new version of Pokedex deployed
+          description: to https://full-stack-open-pokedex-thanhtoantu.fly.dev by ${{ github.actor }}
+          text: A new version of Pokedex deployed.
   tag_release:
     needs: [simple_deployment_pipeline]
     if: ${{ github.event_name == 'push' }}
